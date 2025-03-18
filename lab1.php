@@ -8,14 +8,14 @@
 </head>
 <body>
     <header>
-        <img src="../img/logo.png" alt="Лого">
-        <h1>Hello, World!</h1>
+        <img src="../img/logo.png" alt="Логотип Мосполитеха">
+        <h1>2.1.Домашняя работа: Hello, World!</h1>
     </header>
     <main>
         <h2><?php echo "Hello, World!"; ?></h2>
     </main>
     <footer>
-        <p>Создать веб-страницу с динамическим контентом</p>
+        <p>Задание для самостоятельной работы</p>
     </footer>
 </body>
 </html>
