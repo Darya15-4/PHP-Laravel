@@ -8,9 +8,7 @@
 </head>
 <body>
     <header>
-        <a href="../lab1.php">
-            <img src="../img/logo.png" alt="logo" width=100px>
-        </a>
+        <img src="./logo.png" alt="Логотип Мосполитеха">
         <p>Домашняя работа: Solve the equation</p>
     </header>
     <main>
