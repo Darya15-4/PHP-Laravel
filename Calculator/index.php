@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="calculator">
-        <h2>PHP Калькулятор</h2>
+        <h2>Калькулятор</h2>
         <form method="POST" action="" onsubmit="return validateInput();">
             <input type="text" name="expression" id="expression" placeholder="Введите выражение" value="<?= htmlspecialchars($input) ?>">
             <button type="submit">Посчитать</button>
