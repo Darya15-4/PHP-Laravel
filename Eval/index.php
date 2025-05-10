@@ -43,5 +43,5 @@ function evaluateExpression($input) {
     return $expression;
 }
 
-echo evaluateExpression('4/3*cos(30)');
+echo evaluateExpression('5/8*cos(45)');
 ?>
