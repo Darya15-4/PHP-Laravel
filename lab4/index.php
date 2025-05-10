@@ -31,5 +31,6 @@ print_r($matches4[0]);
 $str_task5 = 'aba aea aca aza axa a-a a#a';
 preg_match_all('/a[^ex]a/', $str_task5, $matches5);
 print_r($matches5[0]);
-?>
+
+
 ?>
