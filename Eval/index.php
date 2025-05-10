@@ -1,47 +1,33 @@
 <?php
-function evaluateExpression($input) {
-    if (trim($input) === '') return 0;
 
-    $expression = "0+" . str_replace(' ', '', $input);
-
-    $replacements = ['--' => '+', '++' => '+', '+-' => '-', '-+' => '-'];
-    foreach ($replacements as $search => $replace) {
-        $expression = str_replace($search, $replace, $expression);
-    }
-    while (preg_match('/([a-z]+)\((-?\d+)\)/i', $expression, $match)) {
-        $func = strtolower($match[1]);
-        $angle = (float)$match[2];
-        $rad = deg2rad($angle);
-        $value = 0;
-
-        if ($func === 'sin') $value = sin($rad);
-        elseif ($func === 'cos') $value = cos($rad);
-        elseif ($func === 'tan') $value = tan($rad);
-        elseif ($func === 'cot') $value = (tan($rad) != 0) ? 1 / tan($rad) : NAN;
-
-        $expression = str_replace($match[0], $value, $expression);
-    }
-    while (preg_match('/(-?\d+\.?\d*)([\/\*])(-?\d+\.?\d*)/', $expression, $match)) {
-        $a = (float)$match[1];
-        $b = (float)$match[3];
-        $op = $match[2];
-
-        if ($op === '/' && $b == 0) return 'division by zero';
-
-        $result = $op === '*' ? $a * $b : $a / $b;
-        $expression = str_replace($match[0], $result, $expression);
-    }
-    while (preg_match('/(-?\d+\.?\d*)([\+\-])(-?\d+\.?\d*)/', $expression, $match)) {
-        $a = (float)$match[1];
-        $b = (float)$match[3];
-        $op = $match[2];
-
-        $result = $op === '+' ? $a + $b : $a - $b;
-        $expression = str_replace($match[0], $result, $expression);
-    }
-
-    return $expression;
+function task1($str) {
+    return preg_replace('/(?<=[^b])aaa/', '!', $str);
 }
 
-echo evaluateExpression('5/8*cos(45)');
+echo "1) " . task1("waaa baaa caaa") . "\n";
+
+function task2($str) {
+    return preg_replace_callback('/\d/', function($match) {
+        $digit = $match[0];
+        eval("\$result = '$digit' . '$digit';");
+        return $result;
+    }, $str);
+}
+
+echo "2) " . task2("a1b2c3") . "\n";
+
+function task3($str) {
+    preg_match_all('/ab{1,3}a/', $str, $matches);
+    return implode(' ', $matches[0]);
+}
+
+echo "3) " . task3("aa aba abba abbba abbbba abbbbba") . "\n";
+
+function task4($str) {
+    preg_match_all('/a..a/', $str, $matches);
+    return implode(' ', $matches[0]);
+}
+
+echo "4) " . task4("aba aca aea abba adca abea") . "\n";
+
 ?>
