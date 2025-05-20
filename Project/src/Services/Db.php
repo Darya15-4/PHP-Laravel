@@ -1,44 +1,50 @@
-<?php 
+<?php
 
 namespace src\Services;
-use src;
+
+use PDO;
+use PDOException;
+use stdClass;
 
 class Db {
-    private $connect;
-    private static $instance;
+    private PDO $connection;
+    private static ?self $instance = null;
 
     private function __construct() {
         try {
-            $dbOptions = require('settings.php');
-            $this->connect = new \PDO(
-                'mysql:host=' . $dbOptions['host'] . ';dbname=' . $dbOptions['dbname'],
+            $dbOptionsFull = require('settings.php');
+            $dbOptions = $dbOptionsFull['db'];  // <-- правильно извлекаем вложенный массив
+
+            $dsn = 'pgsql:host=' . $dbOptions['host'] . ';port=' . ($dbOptions['port'] ?? 5432) . ';dbname=' . $dbOptions['dbname'];
+            $this->connection = new PDO(
+                $dsn,
                 $dbOptions['user'],
                 $dbOptions['password']
             );
-            $this->connect->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);  // Настроим исключения на ошибки
-            $this->connect->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);  // Стандартный режим получения данных
-        } catch (\PDOException $e) {
-            die('Database connection failed: ' . $e->getMessage());
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die('Ошибка подключения к базе данных: ' . $e->getMessage());
         }
     }
 
-    public static function getInstance(): Db {
+    public static function getInstance(): self {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function query(string $sql, array $params = [], string $className = 'stdClass'): ?array {
-        $sth = $this->connect->prepare($sql);
-        $result = $sth->execute($params);
+    public function executeQuery(string $sql, array $params = [], string $fetchClass = stdClass::class): ?array {
+        $statement = $this->connection->prepare($sql);
+        $result = $statement->execute($params);
         if (!$result) {
             return null;
         }
-        return $sth->fetchAll(\PDO::FETCH_CLASS, $className);
+        return $statement->fetchAll(PDO::FETCH_CLASS, $fetchClass);
     }
 
-    public function getConnection(): \PDO {
-        return $this->connect;
+    public function getPdoConnection(): PDO {
+        return $this->connection;
     }
 }

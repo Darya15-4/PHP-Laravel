@@ -1,70 +1,68 @@
 <?php
-
 namespace src\Models\Comments;
 
 use src\Models\ActiveRecordEntity;
-use src\Services\Db;
+use src\Models\Articles\Article;
+use src\Models\Users\User;
 
-class Comment extends ActiveRecordEntity
-{
-    protected int $id;
-    protected int $authorId;
-    protected int $articleId;
-    protected string $text;
-    protected string $createdAt;
+class Comment extends ActiveRecordEntity {
+    protected $id;
+    protected $authorId;
+    protected $articleId;
+    protected $text;
+    protected $createdAt;
 
-    protected static function getTableName(): string
-    {
+    public static function getTableName(): string {
         return 'comments';
     }
-
-    public static function findByArticleId(int $articleId): array
-    {
-        $db  = Db::getInstance();
-        $sql = 'SELECT * FROM comments WHERE article_id = :article_id ORDER BY created_at ASC';
-        return $db->query($sql, [':article_id' => $articleId], static::class);
+    
+    public function getAuthor() {
+        return User::getById($this->authorId);
     }
 
-    public static function getById(int $id): ?self
-    {
-        $db  = Db::getInstance();
-        $sql = 'SELECT * FROM comments WHERE id = :id';
-        $rows = $db->query($sql, [':id' => $id], static::class);
-        return $rows ? $rows[0] : null;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getAuthorId(): int
-    {
-        return $this->authorId;
-    }
-
-    public function setAuthorId(int $authorId): void
-    {
-        $this->authorId = $authorId;
-    }
-
-    public function getArticleId(): int
-    {
+    public function getArticleId() {
         return $this->articleId;
+    } 
+
+    public function getArticle() {
+        return Article::getById($this->articleId);
     }
 
-    public function setArticleId(int $articleId): void
-    {
-        $this->articleId = $articleId;
-    }
-
-    public function getText(): string
-    {
+    public function getText(): string {
         return $this->text;
     }
 
-    public function setText(string $text): void
-    {
+    public function getCreatedAt(): string {
+        return $this->createdAt;
+    }
+
+    public static function getByArticleId(int $articleId): array {
+        $all = self::findAll();
+
+        $result = array_filter($all, function (Comment $comment) use ($articleId) {
+            return $comment->getArticleId() == $articleId;
+        });
+
+        return array_values($result);
+    }
+
+    public function setAuthorId(int $authorId): void {
+        $this->authorId = $authorId;
+    }
+
+    public function setArticleId(int $articleId): void {
+        $this->articleId = $articleId;
+    }
+
+    public function setText(string $text): void {
         $this->text = $text;
+    }
+
+    public function setCreatedAt(string $createdAt): void {
+        $this->createdAt = $createdAt;
+    }
+    public static function findById(int $id): ?self
+    {
+        return static::getById($id);
     }
 }

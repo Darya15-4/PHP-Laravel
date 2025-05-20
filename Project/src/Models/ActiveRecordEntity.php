@@ -1,8 +1,10 @@
 <?php
+
 namespace src\Models;
+
 use src\Services\Db;
 
- abstract class ActiveRecordEntity
+abstract class ActiveRecordEntity
 {
     protected $id;
 
@@ -11,88 +13,111 @@ use src\Services\Db;
         return $this->id;
     }
 
-    public function __set($column, $value){
+    public function __set($column, $value)
+    {
         $property = $this->upperToCamelCase($column);
         $this->$property = $value;
     }
 
-    protected abstract static function getTableName();
-
-    private function upperToCamelCase($column){
+    private function upperToCamelCase(string $column): string
+    {
         return lcfirst(str_replace('_', '', ucwords($column, '_')));
     }
 
-    private function camelcaseToUpper($property){
-        return strtolower(preg_replace('/([A-Z])/','_$1', $property));
+    private function camelcaseToUpper(string $property): string
+    {
+        return strtolower(preg_replace('/([A-Z])/', '_$1', $property));
     }
 
-    protected function MappedPropertiesToDB(){
+    protected function mapPropertiesToDbColumns(): array
+    {
         $reflector = new \ReflectionObject($this);
-        $properties=[];
-        foreach($reflector->getProperties() as $property){
+        $properties = [];
+
+        foreach ($reflector->getProperties() as $property) {
             $propertyName = $property->getName();
             $propertyNameDb = $this->camelcaseToUpper($propertyName);
             $properties[$propertyNameDb] = $this->$propertyName;
         }
+
         return $properties;
     }
-    
-    public static function findAll() :array
+
+    public static function findAll(): array
     {
         $db = Db::getInstance();
-        $sql = 'SELECT * FROM `'.static::getTableName().'`';
-        return $db->query($sql, [], static::class);
+        $sql = 'SELECT * FROM "' . static::getTableName() . '"';
+        return $db->executeQuery($sql, [], static::class) ?: [];
     }
 
     public static function getById(int $id)
     {
         $db = Db::getInstance();
-        $sql = 'SELECT * FROM `'.static::getTableName().'` WHERE `id`=:id';
-        $entities = $db->query($sql, [':id'=>$id], static::class);
+        $sql = 'SELECT * FROM "' . static::getTableName() . '" WHERE "id" = :id';
+        $entities = $db->executeQuery($sql, [':id' => $id], static::class);
         return $entities ? $entities[0] : null;
     }
 
+    public function save()
+    {
+        $propertiesDB = $this->mapPropertiesToDbColumns();
 
-    public function save(){
-        $propertisDB = $this->MappedPropertiesToDB();
-        if($this->id) $this->update($propertisDB);
-        else $this->insert($propertisDB);
+        if ($this->id) {
+            $this->update($propertiesDB);
+        } else {
+            $this->insert($propertiesDB);
+        }
     }
 
-    protected function update($propertisDB){
-        $db = DB::getInstance();
+    protected function update(array $propertiesDB): void
+    {
+        $db = Db::getInstance();
         $columns2Params = [];
         $params2Values = [];
-        foreach($propertisDB as $key=>$value){
-            $param = ':'.$key;
-            $column = '`'.$key.'`';
-            $columns2Params[] = $column.'='.$param;
+
+        foreach ($propertiesDB as $key => $value) {
+            $param = ':' . $key;
+            $column = '"' . $key . '"';
+            $columns2Params[] = $column . ' = ' . $param;
             $params2Values[$param] = $value;
         }
-        $sql = 'UPDATE `'.static::getTableName().'` SET '.implode(',', $columns2Params).' WHERE `id`=:id';
-        $db->query($sql, $params2Values, static::class);
+
+        $params2Values[':id'] = $this->id;
+
+        $sql = 'UPDATE "' . static::getTableName() . '" SET ' . implode(', ', $columns2Params) . ' WHERE "id" = :id';
+        $db->executeQuery($sql, $params2Values, static::class);
     }
 
-    protected function insert($propertisDB){
-        $propertisDB = array_filter($propertisDB);
+    protected function insert(array $propertiesDB): void
+    {
+        $propertiesDB = array_filter($propertiesDB, function ($value) {
+            return $value !== null;
+        });
+
         $db = Db::getInstance();
         $columns = [];
         $params = [];
         $params2Values = [];
-        foreach($propertisDB as $key=>$value){
-            $columns[] = '`'.$key.'`';
-            $param = ':'.$key;
+
+        foreach ($propertiesDB as $key => $value) {
+            $columns[] = '"' . $key . '"';
+            $param = ':' . $key;
             $params[] = $param;
             $params2Values[$param] = $value;
         }
-        $sql = 'INSERT INTO `'.static::getTableName().'` ('.implode(',', $columns).') VALUES ('.implode(',', $params).')';
-        $db->query($sql, $params2Values, static::class);
-        $this->id = $db->getConnection()->lastInsertId();
+
+        $sql = 'INSERT INTO "' . static::getTableName() . '" (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $params) . ')';
+        $db->executeQuery($sql, $params2Values, static::class);
+
+        $this->id = $db->getPdoConnection()->lastInsertId();
     }
 
-    public function delete(){
+    public function delete(): void
+    {
         $db = Db::getInstance();
-        $sql = 'DELETE FROM `'.static::getTableName().'` WHERE `id`=:id';
-        $db->query($sql, [':id'=>$this->id], static::class);
+        $sql = 'DELETE FROM "' . static::getTableName() . '" WHERE "id" = :id';
+        $db->executeQuery($sql, [':id' => $this->id], static::class);
     }
+
+    abstract protected static function getTableName(): string;
 }

@@ -1,13 +1,23 @@
 <?php
 
+
+use src\Controllers\ArticleController;
+use src\Controllers\MainController;
+use src\Controllers\CommentController;
+
 return [
-    // '~^$~'=>[src\Controllers\MainController::class, 'main'],
-    '~^$~'=>[src\Controllers\ArticleController::class, 'index'],
-    '~article/(\d+)/edit~'=>[src\Controllers\ArticleController::class, 'edit'],
-    '~article/(\d+)/update~'=>[src\Controllers\ArticleController::class, 'update'],
-    '~^article/(\d+)$~'=>[src\Controllers\ArticleController::class, 'show'],
-    '~^article/(\d+)/delete$~'=>[src\Controllers\ArticleController::class, 'delete'],
-    '~^article/create$~'=>[src\Controllers\ArticleController::class, 'create'],
-    '~^article/store$~'=>[src\Controllers\ArticleController::class, 'store'],
-    '~^hello/(.+)$~'=>[src\Controllers\MainController::class,'sayHello'],
+    '~^$~' => [ArticleController::class, 'index'],
+    '~article/(\d+)/edit$~' => [ArticleController::class, 'edit'],
+    '~article/(\d+)/update$~' => [ArticleController::class, 'update'],
+    '~^article/(\d+)$~' => [ArticleController::class, 'show'],
+    '~^article/(\d+)/delete$~' => [ArticleController::class, 'delete'],
+    '~^article/create$~' => [ArticleController::class, 'create'],
+    '~^article/store$~' => [ArticleController::class, 'store'],
+
+    // Комментарии
+    '~^article/(\d+)/comments$~' => [CommentController::class, 'store'], // POST для создания комментария
+    '~^comments/(\d+)/edit$~' => [CommentController::class, 'edit'],
+    '~^comments/(\d+)/update$~' => [CommentController::class, 'update'],
+
+    '~^hello/(.+)$~' => [MainController::class, 'sayHello'],
 ];

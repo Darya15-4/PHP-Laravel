@@ -1,18 +1,8 @@
-<?php require(dirname(__DIR__).'/header.php');?>
-<form action="<?=dirname($_SERVER['SCRIPT_NAME'])?>/article/<?=$article->getId();?>/update" method="post">
-    <div class="mb-3">
-    <label for="date" class="form-label">Дата</label>
-    <input type="text" class="form-control" id="date" name="date" value="<?=$article->getCreatedAt();?>">
-    </div>
-    <div class="mb-3">
-    <label for="name" class="form-label">Название</label>
-    <input type="text" class="form-control" id="name" name="name" value="<?=$article->getName();?>">
-    </div>
-    <div class="mb-3">
-    <label for="text" class="form-label">Текст</label>
-    <textarea class="form-control" id="text" rows="3" name="text"><?=$article->getText();?></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Сохранить</button>
+<h2>Редактировать статью</h2>
+
+<form action="/comments/<?= $comment->getId() ?>/update" method="post">
+    <textarea name="text" rows="4" cols="50"><?= htmlspecialchars($comment->getText()) ?></textarea><br>
+    <button type="submit">Сохранить</button>
 </form>
 
-<?php require(dirname(__DIR__).'/footer.php'); ?>
+<p><a href="/article/<?= $comment->getArticleId() ?>#comment<?= $comment->getId() ?>">Отмена</a></p>

@@ -24,6 +24,6 @@ class CommentController {
         $comment->save();
         
         $commentId = $comment->getId();
-        return header('Location:http://localhost/php-laravel/Project/www/article/'.$comment->getArticleId(). '#comment' . $commentId);
+        return header('Location:http://localhost/php/project/www/article/'.$comment->getArticleId(). '#comment' . $commentId);
     }
 }

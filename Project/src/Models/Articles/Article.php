@@ -30,7 +30,7 @@ class Article extends ActiveRecordEntity {
         return $this->createdAt;
     }
     public function getComments() {
-        return Comment::findByArticleId($this->id);
+        return Comment::getByArticleId($this->id);
     }
     public function setId($id): void {
         $this->id = $id;
