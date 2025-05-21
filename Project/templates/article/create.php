@@ -1,8 +1,7 @@
 <?php require __DIR__ . '/../header.php'; ?>
 
 <h1>Создать новую статью</h1>
-
-<form method="post" action="/?route=/article/store">
+<form method="post" action="/?route=article/store">
     <label>Заголовок:<br>
         <input type="text" name="title" required>
     </label><br><br>

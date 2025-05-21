@@ -6,7 +6,7 @@ use src\Models\Comments\Comment;
 
 class Article extends ActiveRecordEntity {
     protected $id;
-    protected $name;
+    protected $title; 
     protected $text;
     protected $authorId;
     protected $createdAt;
@@ -17,8 +17,8 @@ class Article extends ActiveRecordEntity {
     public function getId() {
         return $this->id;
     }
-    public function getName() {
-        return $this->name;
+    public function getTitle() {
+        return $this->title;
     }
     public function getText() {
         return $this->text;
@@ -29,14 +29,8 @@ class Article extends ActiveRecordEntity {
     public function getCreatedAt() {
         return $this->createdAt;
     }
-    public function getComments() {
-        return Comment::getByArticleId($this->id);
-    }
-    public function setId($id): void {
-        $this->id = $id;
-    }
-    public function setName($name): void {
-        $this->name = $name;
+    public function setTitle($title): void {
+        $this->title = $title;
     }
     public function setText($text): void {
         $this->text = $text;
@@ -47,4 +41,9 @@ class Article extends ActiveRecordEntity {
     public function setCreatedAt($createdAt): void {
         $this->createdAt = $createdAt;
     }
+    public function getComments() {
+        $commentModel = new Comment();
+        return $commentModel->getByArticleId($this->id);
+    }
+    
 }

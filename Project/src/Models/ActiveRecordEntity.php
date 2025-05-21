@@ -47,14 +47,14 @@ abstract class ActiveRecordEntity
     {
         $db = Db::getInstance();
         $sql = 'SELECT * FROM "' . static::getTableName() . '"';
-        return $db->executeQuery($sql, [], static::class) ?: [];
+        return $db->query($sql, [], static::class) ?: [];
     }
 
     public static function getById(int $id)
     {
         $db = Db::getInstance();
         $sql = 'SELECT * FROM "' . static::getTableName() . '" WHERE "id" = :id';
-        $entities = $db->executeQuery($sql, [':id' => $id], static::class);
+        $entities = $db->query($sql, [':id' => $id], static::class);
         return $entities ? $entities[0] : null;
     }
 
@@ -85,7 +85,7 @@ abstract class ActiveRecordEntity
         $params2Values[':id'] = $this->id;
 
         $sql = 'UPDATE "' . static::getTableName() . '" SET ' . implode(', ', $columns2Params) . ' WHERE "id" = :id';
-        $db->executeQuery($sql, $params2Values, static::class);
+        $db->query($sql, $params2Values, static::class);
     }
 
     protected function insert(array $propertiesDB): void
@@ -107,7 +107,7 @@ abstract class ActiveRecordEntity
         }
 
         $sql = 'INSERT INTO "' . static::getTableName() . '" (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $params) . ')';
-        $db->executeQuery($sql, $params2Values, static::class);
+        $db->query($sql, $params2Values, static::class);
 
         $this->id = $db->getPdoConnection()->lastInsertId();
     }
@@ -116,7 +116,7 @@ abstract class ActiveRecordEntity
     {
         $db = Db::getInstance();
         $sql = 'DELETE FROM "' . static::getTableName() . '" WHERE "id" = :id';
-        $db->executeQuery($sql, [':id' => $this->id], static::class);
+        $db->query($sql, [':id' => $this->id], static::class);
     }
 
     abstract protected static function getTableName(): string;

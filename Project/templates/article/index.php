@@ -1,19 +1,24 @@
-<?php require __DIR__ . '/../header.php'; ?>
+<?php  
+require __DIR__ . '/../header.php'; 
+?>
 
 <section class="articles">
     <?php foreach ($articles as $article): ?>
         <article class="article">
-            <a class="article__title" href="<?= dirname($_SERVER['SCRIPT_NAME']) ?>/article/<?= $article->getId(); ?>">
-                <?= $article->getName(); ?>
+            <a class="article__title" href="?route=/article/<?= $article->getId(); ?>">
+                <?= htmlspecialchars($article->getTitle(), ENT_QUOTES, 'UTF-8'); ?>
             </a>
             <div class="article__meta">
-                Опубликовано <?= $article->getCreatedAt(); ?> автором <?= $article->getAuthor()->getName(); ?>
+                Опубликовано <?= htmlspecialchars($article->getCreatedAt(), ENT_QUOTES, 'UTF-8'); ?> 
+                автором <?= htmlspecialchars($article->getAuthor()->getName(), ENT_QUOTES, 'UTF-8'); ?>
             </div>
-            <p class="article__text"><?= $article->getText(); ?></p>
+            <p class="article__text"><?= nl2br(htmlspecialchars($article->getText(), ENT_QUOTES, 'UTF-8')); ?></p>
         </article>
     <?php endforeach; ?>
-
-    <a class="articles__add-button" href="<?= dirname($_SERVER['SCRIPT_NAME']) ?>/article/create">Добавить статью</a>
+    
+    <a href="?route=/article/create">Добавить статью</a>
 </section>
 
-<?php require __DIR__ . '/../footer.php'; ?>
+<?php 
+require __DIR__ . '/../footer.php'; 
+?>

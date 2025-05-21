@@ -13,7 +13,7 @@ class Db {
     private function __construct() {
         try {
             $dbOptionsFull = require('settings.php');
-            $dbOptions = $dbOptionsFull['db'];  // <-- правильно извлекаем вложенный массив
+            $dbOptions = $dbOptionsFull['db']; 
 
             $dsn = 'pgsql:host=' . $dbOptions['host'] . ';port=' . ($dbOptions['port'] ?? 5432) . ';dbname=' . $dbOptions['dbname'];
             $this->connection = new PDO(
@@ -34,8 +34,7 @@ class Db {
         }
         return self::$instance;
     }
-
-    public function executeQuery(string $sql, array $params = [], string $fetchClass = stdClass::class): ?array {
+    public function query(string $sql, array $params = [], string $fetchClass = stdClass::class): ?array {
         $statement = $this->connection->prepare($sql);
         $result = $statement->execute($params);
         if (!$result) {

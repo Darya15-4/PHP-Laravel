@@ -4,6 +4,7 @@ namespace src\Models\Comments;
 use src\Models\ActiveRecordEntity;
 use src\Models\Articles\Article;
 use src\Models\Users\User;
+use src\Services\Db;
 
 class Comment extends ActiveRecordEntity {
     protected $id;
@@ -65,4 +66,14 @@ class Comment extends ActiveRecordEntity {
     {
         return static::getById($id);
     }
+    public static function findByColumn(string $column, $value): array
+{
+    $db = Db::getInstance();;
+    $result = $db->query(
+        "SELECT * FROM comments WHERE $column = :value",
+        [':value' => $value],
+        static::class
+    );
+    return $result ?? [];
+}
 }

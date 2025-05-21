@@ -24,6 +24,32 @@ class CommentController {
         $comment->save();
         
         $commentId = $comment->getId();
-        return header('Location:http://localhost/php/project/www/article/'.$comment->getArticleId(). '#comment' . $commentId);
+        header('Location: /?route=article/' . $comment->getArticleId() . '#comment' . $commentId);
+        exit();
+    }
+     public function store(int $articleId): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo 'Метод не поддерживается';
+            return;
+        }
+
+        $text = trim($_POST['text'] ?? '');
+
+        if ($text === '') {
+            header('Location: /?route=article/' . $articleId);
+            exit();
+        }
+
+        $comment = new Comment();
+        $comment->setArticleId($articleId);
+        $comment->setText($text);
+        $comment->setAuthorId(1); 
+        $comment->setCreatedAt(date('Y-m-d H:i:s'));
+        $comment->save();
+
+        header('Location: /?route=article/' . $articleId . '#comments');
+        exit();
     }
 }

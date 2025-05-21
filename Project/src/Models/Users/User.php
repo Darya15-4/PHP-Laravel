@@ -5,14 +5,14 @@ use src\Models\ActiveRecordEntity;
 
 class User extends ActiveRecordEntity {
     protected $id;
-    protected $nickname;
+    protected $username;
     protected $email;
+    protected $passwordHash;
+    protected $createdAt;
+    protected $nickname;
     protected $isConfirmed;
     protected $role;
-    protected $passwordHash;
     protected $authToken;
-    protected $createdAt;
-
     public static function getTableName(): string {
         return 'users';
     }
@@ -25,7 +25,7 @@ class User extends ActiveRecordEntity {
     }
 
     public function getName(): string {
-        return $this->nickname;
+    return $this->nickname ?? $this->username ?? 'Неизвестный автор';
     }
 
     public function setName(string $nickname): void {
