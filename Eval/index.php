@@ -1,33 +1,25 @@
 <?php
 
-function task1($str) {
-    return preg_replace('/(?<=[^b])aaa/', '!', $str);
-}
+function evaluate_trig_expression($expression) {
+    $expression = preg_replace_callback('/(sin|cos|tan|cot)\(([^)]+)\)/i', function ($matches) {
+        $func = strtolower($matches[1]);
+        $angle_degrees = eval('return ' . $matches[2] . ';');
+        $angle_radians = deg2rad($angle_degrees);
 
-echo "1) " . task1("waaa baaa caaa") . "\n";
+        switch ($func) {
+            case 'sin': return sin($angle_radians);
+            case 'cos': return cos($angle_radians);
+            case 'tan': return tan($angle_radians);
+            case 'cot': return 1 / tan($angle_radians);
+            default: return 0;
+        }
+    }, $expression);
 
-function task2($str) {
-    return preg_replace_callback('/\d/', function($match) {
-        $digit = $match[0];
-        eval("\$result = '$digit' . '$digit';");
+    // Вычисляем финальное выражение
+    try {
+        eval('$result = ' . $expression . ';');
         return $result;
-    }, $str);
+    } catch (Throwable $e) {
+        return "Ошибка при вычислении выражения.";
+    }
 }
-
-echo "2) " . task2("a1b2c3") . "\n";
-
-function task3($str) {
-    preg_match_all('/ab{1,3}a/', $str, $matches);
-    return implode(' ', $matches[0]);
-}
-
-echo "3) " . task3("aa aba abba abbba abbbba abbbbba") . "\n";
-
-function task4($str) {
-    preg_match_all('/a..a/', $str, $matches);
-    return implode(' ', $matches[0]);
-}
-
-echo "4) " . task4("aba aca aea abba adca abea") . "\n";
-
-?>

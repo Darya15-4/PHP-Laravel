@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '../Eval/index.php';
 function validate($expr) {
     return preg_match('/^[\d\+\-\*\/\(\)\s]+$/', $expr);
 }
@@ -32,7 +33,7 @@ $input = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = $_POST['expression'] ?? '';
     if (validate($input)) {
-        $result = calculate($input);
+        $result = evaluate_trig_expression($input);
     } else {
         $result = 'Ошибка: недопустимое выражение.';
     }
