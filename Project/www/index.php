@@ -8,6 +8,7 @@ spl_autoload_register(function(string $className){
 });
 
 $route = $_GET['route'] ?? '';
+$route = ltrim($route, '/');
 $patterns = require('route.php');
 $findRoute = false;
 

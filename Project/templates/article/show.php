@@ -1,11 +1,11 @@
 <?php require __DIR__ . '/../header.php'; ?>
 
 <article class="article-full">
-    <h1 class="article-full__title"><?= $article->getAuthor()->getName(); ?></h1>
+    <h1 class="article-full__title"><?= $article->getTitle(); ?></h1>
     <div class="article-full__meta">
-        Опубликовано <?= $article->getCreatedAt() ?> автором <?= $article->getAuthor()->getName() ?>
+        Опубликовано <?= $article->getCreatedAt(); ?> автором <?= $article->getAuthor()->getName(); ?>
     </div>
-    <p class="article-full__text"><?= $article->getText() ?></p>
+    <p class="article-full__text"><?= $article->getText(); ?></p>
 
     <div class="article-full__actions">
         <a href="/?route=article/<?= $article->getId(); ?>/edit" class="article-full__link">Редактировать</a>
@@ -24,6 +24,7 @@
             <p class="comment__text"><?= $comment->getText(); ?></p>
             <p class="comment__date"><?= $comment->getCreatedAt(); ?></p>
             <a href="/?route=comments/<?= $comment->getId(); ?>/edit" class="comment__edit-link">Редактировать</a>
+            <a href="/?route=comments/<?= $comment->getId(); ?>/delete" class="comment__edit-link" onclick="return confirm('Удалить комментарий?');">Удалить</a>
         </div>
     <?php endforeach; ?>
 

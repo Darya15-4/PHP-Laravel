@@ -1,5 +1,6 @@
 <?php
 namespace src\Controllers;
+
 use src\View\View;
 use src\Services\Db;
 use src\Models\Articles\Article;
@@ -8,6 +9,7 @@ use src\Models\Comments\Comment;
 class CommentController {
     private $view;
     private $db;
+
     public function __construct() {
         $this->view = new View;
         $this->db = Db::getInstance();
@@ -15,20 +17,20 @@ class CommentController {
 
     public function edit($id){
         $comment = Comment::getById($id);
-        $this->view->renderHtml('comments/edit', ['comment'=>$comment]);
+        $this->view->renderHtml('article/editComment', ['comment' => $comment]);
     }
-    
+
     public function update($id){
         $comment = Comment::getById($id);
         $comment->text = $_POST['text'];
         $comment->save();
-        
+
         $commentId = $comment->getId();
         header('Location: /?route=article/' . $comment->getArticleId() . '#comment' . $commentId);
         exit();
     }
-     public function store(int $articleId): void
-    {
+
+    public function store(int $articleId): void {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
             echo 'Метод не поддерживается';
@@ -45,9 +47,25 @@ class CommentController {
         $comment = new Comment();
         $comment->setArticleId($articleId);
         $comment->setText($text);
-        $comment->setAuthorId(1); 
+        $comment->setAuthorId(1);
         $comment->setCreatedAt(date('Y-m-d H:i:s'));
         $comment->save();
+
+        header('Location: /?route=article/' . $articleId . '#comments');
+        exit();
+    }
+
+    public function delete($id): void {
+        $comment = Comment::getById($id);
+
+        if ($comment === null) {
+            http_response_code(404);
+            echo 'Комментарий не найден';
+            return;
+        }
+
+        $articleId = $comment->getArticleId();
+        $comment->delete();
 
         header('Location: /?route=article/' . $articleId . '#comments');
         exit();
